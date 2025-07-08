@@ -22,6 +22,10 @@ LinkedList :: struct {
 	length: uint,
 }
 
+is_empty :: proc(list: ^LinkedList) -> bool {
+	return list.length == 0
+}
+
 
 append_item :: proc(list: ^LinkedList, node: ^Node) {
 	if list.head != nil {
@@ -36,6 +40,17 @@ append_item :: proc(list: ^LinkedList, node: ^Node) {
 		list.length += 1
 	}
 
+}
+
+prepend_item :: proc(list: ^LinkedList, node: ^Node) {
+	if list.head == nil {
+		list.head = node
+		list.length += 1
+	} else {
+		node.next = list.head
+		list.head = node
+		list.length += 1
+	}
 }
 
 pop :: proc(list: ^LinkedList) -> (node: ^Node, error: linked_list_error) {
@@ -81,7 +96,6 @@ printlist :: proc(list: ^LinkedList) -> list_errors {
 
 main :: proc() {
 
-
 	my_node := Node {
 		value = 5,
 		next  = nil,
@@ -92,6 +106,11 @@ main :: proc() {
 		next  = nil,
 	}
 
+	my_node_three := Node {
+		value = "hello",
+		next  = nil,
+	}
+
 	my_linkedlist := LinkedList{}
 
 	append_item(&my_linkedlist, &my_node)
@@ -99,11 +118,11 @@ main :: proc() {
 
 	printlist(&my_linkedlist)
 
-	popped_item, err := pop(&my_linkedlist)
-	pop(&my_linkedlist)
-	fmt.println(pop(&my_linkedlist))
+	//popped_item, err := pop(&my_linkedlist)
 
 	printlist(&my_linkedlist)
-	fmt.println(popped_item.value)
+	prepend_item(&my_linkedlist, &my_node_three)
+	printlist(&my_linkedlist)
+	//fmt.println(popped_item.value)
 
 }

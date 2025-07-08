@@ -4,6 +4,7 @@ import "core:fmt"
 
 list_errors :: enum {
 	TryingOperationOnEmptyList,
+	IndexOutofRange,
 }
 
 linked_list_error :: struct {
@@ -22,6 +23,10 @@ LinkedList :: struct {
 	length: uint,
 }
 
+is_empty :: proc(list: ^LinkedList) -> bool {
+	return list.length == 0
+}
+
 
 append_item :: proc(list: ^LinkedList, node: ^Node) {
 	if list.head != nil {
@@ -36,6 +41,17 @@ append_item :: proc(list: ^LinkedList, node: ^Node) {
 		list.length += 1
 	}
 
+}
+
+prepend_item :: proc(list: ^LinkedList, node: ^Node) {
+	if list.head == nil {
+		list.head = node
+		list.length += 1
+	} else {
+		node.next = list.head
+		list.head = node
+		list.length += 1
+	}
 }
 
 pop :: proc(list: ^LinkedList) -> (node: ^Node, error: linked_list_error) {
@@ -64,6 +80,31 @@ pop :: proc(list: ^LinkedList) -> (node: ^Node, error: linked_list_error) {
 
 }
 
+insert_at :: proc(list: ^LinkedList, node: ^Node, position: int) -> (error: linked_list_error) {
+
+	if position > int(list.length) {
+		return linked_list_error {
+			error_message = "The index you have entered is out of range for the length of the list",
+			error_type = .IndexOutofRange,
+		}
+	}
+
+	if position < 0 {
+		return linked_list_error {
+			error_message = "The index you have entered is out of range for the length of the list",
+			error_type = .IndexOutofRange,
+		}
+	}
+
+	curr := list.head
+	for i := 0; i < position - 1; i += 1 {
+		curr = curr.next
+	}
+	node.next = curr.next
+	curr.next = node
+	return linked_list_error{}
+}
+
 printlist :: proc(list: ^LinkedList) -> list_errors {
 
 	if list.head == nil {
@@ -81,7 +122,6 @@ printlist :: proc(list: ^LinkedList) -> list_errors {
 
 main :: proc() {
 
-
 	my_node := Node {
 		value = 5,
 		next  = nil,
@@ -92,6 +132,16 @@ main :: proc() {
 		next  = nil,
 	}
 
+	my_node_three := Node {
+		value = "hello",
+		next  = nil,
+	}
+
+	my_node_four := Node {
+		value = "insert",
+		next  = nil,
+	}
+
 	my_linkedlist := LinkedList{}
 
 	append_item(&my_linkedlist, &my_node)
@@ -99,11 +149,12 @@ main :: proc() {
 
 	printlist(&my_linkedlist)
 
-	popped_item, err := pop(&my_linkedlist)
-	pop(&my_linkedlist)
-	fmt.println(pop(&my_linkedlist))
+	//popped_item, err := pop(&my_linkedlist)
 
 	printlist(&my_linkedlist)
-	fmt.println(popped_item.value)
+	prepend_item(&my_linkedlist, &my_node_three)
+	insert_at(&my_linkedlist, &my_node_four, 3)
+	printlist(&my_linkedlist)
+	//fmt.println(popped_item.value)
 
 }

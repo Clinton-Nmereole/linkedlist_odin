@@ -136,11 +136,12 @@ main :: proc() {
 		value = "hello",
 		next  = nil,
 	}
-
+  
 	my_node_four := Node {
 		value = "insert",
 		next  = nil,
 	}
+
 
 	my_linkedlist := LinkedList{}
 
@@ -153,7 +154,9 @@ main :: proc() {
 
 	printlist(&my_linkedlist)
 	prepend_item(&my_linkedlist, &my_node_three)
+
 	insert_at(&my_linkedlist, &my_node_four, 3)
+
 	printlist(&my_linkedlist)
 	//fmt.println(popped_item.value)
 
